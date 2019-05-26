@@ -6,17 +6,14 @@
 #define PI 3.14159265
 #define VINCENTYMAXLOOPS 1000
 
-/* This is the C implementation of the Clustering-based approach for Discovering Interesting
- * Places in Trajectories by Palma et al,
- * http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.147.3536&rep=rep1&type=pdf
+/*
  * The algorithm works by 
-
 */
 
 /* define struct data point as described in data description docs. 
  * latitude - index 0. .longitude - index 1. altitude - index 3, date - index 5, time - index 6
  * */
-struct Point{
+struct Point {
 	double latitude;
 	double longitude;
 	double altitude;	
@@ -167,13 +164,26 @@ int* parseTimeDelta(int timedelta) {
 
 
 int main() {
+	/* get the number of rows in the input file to set the area size */
 	FILE* datafile;
-	datafile = fopen("/home/sir/projects/cb-smot/test.plt", "r");
+	datafile = fopen("/home/sir/projects/cb-smot/geos.csv", "r");
 	if (datafile == NULL) {
 		printf("Failed opening datafile\n");
 		return 1;
 	}
+	int datafile_len = 0;
+	char c;
+	for (c = getc(datafile); c != EOF; c = getc(datafile)) {
+		if (c == '\n') {
+			datafile_len++;
+		}
+	}
+	struct Point** point_array = (struct Point **) malloc(datafile_len * sizeof(struct Point *));
+	printf("%d lines in input \n", datafile_len);
+	fclose(datafile);
+	datafile = fopen("/home/sir/projects/cb-smot/geos.csv", "r");
 	char line[200];
+	int lineindex = 0;
 	struct Point* point;
 	printf("TESTING");
 	while (fgets(line, sizeof line, datafile)) {
@@ -203,10 +213,11 @@ int main() {
 			}	
 			index++;
 		}
-			printf("latitude : %.9f, longitude: %.9f %s  %s\n", point->latitude, point->longitude, point->date, point->time);
+		point_array[lineindex] = point;
+		lineindex++;
 	}
-
 	fclose(datafile);
+	printf("latitude1 : %.9f, longitude: %.9f %s %s \n", point_array[0]->latitude, point_array[0]->longitude, point_array[0]->date, point_array[0]->time);
 	printf("CB-SMOT\n");
 	struct Point* p1 = (struct Point*)malloc(sizeof(struct Point)); 
 	struct Point* p2 = (struct Point*)malloc(sizeof(struct Point));
