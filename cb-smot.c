@@ -7,7 +7,7 @@
 #define VINCENTYMAXLOOPS 1000
 
 /*
- * The algorithm works by 
+ * The algorithm works by however i want it to work
 */
 
 /* define struct data point as described in data description docs. 
@@ -21,7 +21,7 @@ struct Point {
 	char* time;
 } ;
 
-/* find distance between two Points  using haversine distance*/ 
+/* find distance between two Points  using haversine distance zf11j */ 
 double haversineDistance(struct Point* p1, struct Point* p2) {
 	/*distance between lat and lon */
 	double dlat = (p2->latitude - p1->latitude) * PI / 180.0;
@@ -36,7 +36,7 @@ double haversineDistance(struct Point* p1, struct Point* p2) {
 	return rad * c;
 }
 
-/* find distance between two Points using vincenty solutions of geodesics on the ellipsoid */
+/* find distance between two Points using vincenty solutions of geodesics on the ellipsoid   ---zf56j --*/
 double vincentyDistance(struct Point* p1, struct Point* p2) {
 	double radius_of_equator = 6378137.0;  /*radius of the equator in meters via WGS-84 */
 	double f= 1.0/298.257223563; /* flattening of the elipsoid - WGS-84 */
@@ -98,9 +98,8 @@ double vincentyDistance(struct Point* p1, struct Point* p2) {
 }
 
 /* find absolute value of difference in time between two Points (only meant for same day comparison
- * Different days should not be compared when looking at daily trajectories */
+ * Different days should not be compared when looking at daily trajectories zf48 j*/
 int timedelta(char* p1, char* p2) {
-	
 	/*get hour, minute, second */
 	char* t1 = strdup(p1);
 	char* t2 = strdup(p2);
@@ -158,10 +157,14 @@ int* parseTimeDelta(int timedelta) {
 	delta[0] = timedelta / 3600;
 	delta[1] = (timedelta%3600)/60;
 	delta[2] = (timedelta%3600)%60;
-	
 	return delta;
 }
 
+/*takes array of Points and function pointer? and computes distance between the points */
+int* geospatialDistance( struct Point** arr, void (*distanceMetric)) {
+	printf("latitude1 : %.9f, longitude: %.9f %s %s \n", arr[0]->latitude, arr[0]->longitude, arr[0]->date, arr[0]->time);
+
+}
 
 int main() {
 	/* get the number of rows in the input file to set the area size */
@@ -185,7 +188,6 @@ int main() {
 	char line[200];
 	int lineindex = 0;
 	struct Point* point;
-	printf("TESTING");
 	while (fgets(line, sizeof line, datafile)) {
 		point = (struct Point*)malloc(sizeof(struct Point));
 		int index = 0;
@@ -218,7 +220,7 @@ int main() {
 	}
 	fclose(datafile);
 	printf("latitude1 : %.9f, longitude: %.9f %s %s \n", point_array[0]->latitude, point_array[0]->longitude, point_array[0]->date, point_array[0]->time);
-	printf("CB-SMOT\n");
+	printf("----lets be honest, this is not cbsmot. this is bradypol----\n");
 	struct Point* p1 = (struct Point*)malloc(sizeof(struct Point)); 
 	struct Point* p2 = (struct Point*)malloc(sizeof(struct Point));
 	p1->latitude = 39.152501;
@@ -237,8 +239,8 @@ int main() {
 	int* parseddelta = parseTimeDelta(td);
 	printf("\nTime delta : %d seconds\n", td);
 	printf("\nTime delta : %d hours, %d minutes, %d seconds\n", parseddelta[0], parseddelta[1], parseddelta[2]);
-	/* now that you have read in the data .... read cb smot and find out wazzup */
-
+	/* now that you have read in the data .... do your own sucka and find out wazzup */
+	geospatialDistance(point_array, haversineDistance);
 
 	return 0;
 }
